@@ -1,0 +1,5 @@
+# ignore everything in this bind-mounted directory
+*
+
+# don't ignore .gitignore itself
+!.gitignore

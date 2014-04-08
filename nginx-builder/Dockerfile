@@ -13,7 +13,7 @@ RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales
 # Enable universe & src
 RUN sed -i s/main/'main universe'/ /etc/apt/sources.list
 
-# Run upgrades 
+# Run upgrades
 RUN echo udev hold | dpkg --set-selections && \
     echo initscripts hold | dpkg --set-selections &&\
     echo upstart hold | dpkg --set-selections &&\
@@ -21,14 +21,14 @@ RUN echo udev hold | dpkg --set-selections && \
     apt-get -y upgrade
 
 # Install build tools for nginx
-RUN apt-get -y install wget git unzip build-essential 
+RUN apt-get -y install wget git unzip build-essential
 
 # Download nginx
 ENV NGINX_VERSION 1.5.12
 ENV PCRE_VERSION 8.34
 ENV ZLIB_VERSION 1.2.8
-ENV OPENSSL_VERSION 1.0.1f
-ENV PSOL_VERSION 1.7.30.3
+ENV OPENSSL_VERSION 1.0.1g
+ENV PSOL_VERSION 1.7.30.4
 ENV HDR_MORE_MOD_VERSION 0.25
 
 WORKDIR /usr/src
@@ -101,7 +101,7 @@ RUN cd /usr/src/nginx-${NGINX_VERSION} && ./configure \
     --add-module=/usr/src/ngx_pagespeed-${PSOL_VERSION}-beta \
     --add-module=/usr/src/headers-more-nginx-module-${HDR_MORE_MOD_VERSION} &&\
    mkdir -p /var/lib/nginx &&\
-   mkdir -p /www	
+   mkdir -p /www
 
 RUN mkdir /rootfs
 RUN cd /usr/src/nginx-${NGINX_VERSION} && make && make DESTDIR=/rootfs install
@@ -127,6 +127,6 @@ RUN bash -c "cp /usr/lib/x86_64-linux-gnu/libstdc++.so.* lib"
 RUN cp /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 lib
 ADD nginx /rootfs/etc/nginx
 RUN bash -c "mkdir -p /rootfs/var/lib/nginx/{body,fastcgi,proxy,scgi,uwsgi}"
-RUN mkdir /rootfs/www && bash -c "mkdir -p /rootfs/www/{empty,default}" && mv /rootfs/opt/nginx/html/* /rootfs/www/default && rm -Rf /rootfs/opt/nginx && chown -R nobody:nogroup /rootfs/www 
+RUN mkdir /rootfs/www && bash -c "mkdir -p /rootfs/www/{empty,default}" && mv /rootfs/opt/nginx/html/* /rootfs/www/default && rm -Rf /rootfs/opt/nginx && chown -R nobody:nogroup /rootfs/www
 RUN tar cf /rootfs.tar .
 RUN for X in console null ptmx random stdin stdout stderr tty urandom zero ; do tar uf /rootfs.tar -C/ ./dev/$X ; done

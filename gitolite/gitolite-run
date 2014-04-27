@@ -1,0 +1,53 @@
+#!/bin/sh
+
+# This software is Copyright (c) 2014 by Chris Weyl <cweyl@alumni.drew.edu>.
+#
+# This is free software, licensed under:
+#
+# The GNU Lesser General Public License, Version 2.1, February 1999
+
+# see: https://github.com/RsrchBoy/gitolite-base-dock/
+
+set -e
+
+[ -d /srv/ssh ] || ( mkdir -p /srv/ssh && chmod 0700 /srv/ssh )
+
+# Crude, but effective: generate all hostkeys not already present, then copy
+# them to where we expect to find them if not already present.
+
+if [ ! -f /srv/ssh/.ssh-keys-setup ] ; then
+
+    echo "# generating ssh host keys specific to this instance..."
+    rm -f /etc/ssh/ssh_host*
+    /usr/bin/ssh-keygen -A
+    mkdir -p /srv/ssh
+    cp -n /etc/ssh/ssh_host* /srv/ssh/
+    for b in /srv/ssh/ssh_host*.pub ; do
+        ssh-keygen -B -f $b
+    done
+    echo "# ...done."
+    touch /srv/.ssh-keys-setup
+fi
+
+# if this is our first time or we're not using a preexisting volume for /srv,
+# then we need to make sure everything is in place.
+[ -d /srv     ] || mkdir /srv ; chmod 0755 /srv
+[ -d /srv/git ] || ( mkdir -p /srv/git && chown -R git.git /srv/git )
+cd /srv/git
+
+# get our gitolite version...
+GITOLITE_V=`cd /usr/local/src/gitolite && git describe`
+SETUP_FLAG=".gitolite-$GITOLITE_V-is-setup"
+
+# NOTE: we do this each time so as to allow for changed admin keys, upgrades,
+# and the like.
+
+echo '# establishing gitolite...'
+su git -c 'gitolite setup -pk /usr/local/src/admin.pub' || (ls -laR /srv ; exit 1)
+su git -c 'gitolite setup' || (ls -laR /srv ; exit 1)
+
+echo "# ...done."
+
+# and finally, run sshd w/o detaching; logs to STDERR
+echo "# launching with gitolite version: $GITOLITE_V"
+cd && /usr/sbin/sshd -D -e

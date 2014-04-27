@@ -1,4 +1,4 @@
-# VERSION: 1.5.10
+# VERSION: 1.6.0
 
 FROM stackbrew/ubuntu:13.10
 
@@ -24,8 +24,8 @@ RUN echo udev hold | dpkg --set-selections && \
 RUN apt-get -y install wget git unzip build-essential
 
 # Download nginx
-ENV NGINX_VERSION 1.5.12
-ENV PCRE_VERSION 8.34
+ENV NGINX_VERSION 1.6.0
+ENV PCRE_VERSION 8.35
 ENV ZLIB_VERSION 1.2.8
 ENV OPENSSL_VERSION 1.0.1g
 ENV PSOL_VERSION 1.7.30.4

@@ -24,11 +24,11 @@ RUN echo udev hold | dpkg --set-selections && \
 RUN apt-get -y install wget git unzip build-essential
 
 # Download nginx
-ENV NGINX_VERSION 1.6.0
+ENV NGINX_VERSION 1.7.2
 ENV PCRE_VERSION 8.35
 ENV ZLIB_VERSION 1.2.8
-ENV OPENSSL_VERSION 1.0.1g
-ENV PSOL_VERSION 1.8.31.2
+ENV OPENSSL_VERSION 1.0.1h
+ENV PSOL_VERSION 1.8.31.4
 ENV HDR_MORE_MOD_VERSION 0.25
 
 WORKDIR /usr/src

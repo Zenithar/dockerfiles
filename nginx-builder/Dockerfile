@@ -24,7 +24,7 @@ RUN echo udev hold | dpkg --set-selections && \
 RUN apt-get -y install wget git unzip build-essential
 
 # Download nginx
-ENV NGINX_VERSION 1.7.2
+ENV NGINX_VERSION 1.7.3
 ENV PCRE_VERSION 8.35
 ENV ZLIB_VERSION 1.2.8
 ENV OPENSSL_VERSION 1.0.1h
